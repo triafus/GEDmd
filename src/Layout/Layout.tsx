@@ -1,13 +1,9 @@
 import { Provider } from "react-redux";
-import { Meta, Links, ScrollRestoration, Scripts } from "react-router";
+import { Meta, Links, ScrollRestoration, Scripts, Outlet } from "react-router";
 import { store } from "../store/store";
+import Box from "@mui/material/Box";
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-export const Layout = (props: LayoutProps) => {
-  const { children } = props;
+export function Layout() {
   return (
     <html lang="fr">
       <head>
@@ -17,10 +13,14 @@ export const Layout = (props: LayoutProps) => {
         <Links />
       </head>
       <body>
-        <Provider store={store}>{children}</Provider>
+        <Provider store={store}>
+          <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+            <Outlet />
+          </Box>
+        </Provider>
         <ScrollRestoration />
         <Scripts />
       </body>
     </html>
   );
-};
+}
