@@ -1,8 +1,10 @@
+import { Box, Typography } from "@mui/material";
+
 const Home = () => {
   return (
-    <div>
-      <h1>Home</h1>
-    </div>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4">Home</Typography>
+    </Box>
   );
 };
 
