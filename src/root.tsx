@@ -31,10 +31,11 @@ export const Layout = ({ children }: LayoutProps) => {
   );
 };
 
-export const App = () => {
+export default function App() {
   return (
     <Provider store={store}>
       <Outlet />
     </Provider>
   );
-};
+}
+

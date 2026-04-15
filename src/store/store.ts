@@ -1,10 +1,12 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import documentsReducer from "./documents/documentsSlice";
+import filesReducer from "./files/filesSlice";
+import foldersReducer from "./folders/foldersSlice";
 import blocksReducer from "./blocks/blocksSlice";
 import { loadState, saveState } from "./persistence";
 
 const rootReducer = combineReducers({
-  documents: documentsReducer,
+  folders: foldersReducer,
+  files: filesReducer,
   blocks: blocksReducer,
 });
 
@@ -17,10 +19,12 @@ export const store = configureStore({
 
 store.subscribe(() => {
   saveState({
-    documents: store.getState().documents,
+    folders: store.getState().folders,
+    files: store.getState().files,
     blocks: store.getState().blocks,
   });
 });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
