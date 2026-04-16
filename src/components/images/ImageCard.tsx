@@ -6,6 +6,7 @@ import { removeImage, updateImage } from "../../store/images/imagesSlice";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+
 type ImageCardProps = {
   image: LibraryImage;
 };
@@ -26,6 +27,21 @@ export default function ImageCard({ image }: ImageCardProps) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+  //export image
+  const handleExport = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    const dataStr = JSON.stringify(image, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${image.name}.img.mdlc`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
   };
 
   // - function ***********************************************************************************************
@@ -72,6 +88,7 @@ export default function ImageCard({ image }: ImageCardProps) {
   return (
     // <> fragment/ wrapper for Card et Dialog
     <>
+      
       <Card ref={setNodeRef}
 
         style={style}
@@ -192,7 +209,16 @@ export default function ImageCard({ image }: ImageCardProps) {
             >
               Renommer
             </Button>
+
           </Box>
+          <Button
+            variant="outlined"
+            size="small"
+            // sx={{ flex: 1 }}
+            onClick={handleExport}
+          >
+            ↓ export
+          </Button>
         </CardContent>
 
 

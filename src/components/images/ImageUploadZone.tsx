@@ -9,6 +9,7 @@ export default function ImageUploadZone() {
   const dispatch = useDispatch();
   const images = useSelector((state: RootState) => state.images);
 
+
   // - Functions
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -47,6 +48,9 @@ export default function ImageUploadZone() {
     event.target.value = "";
   };
 
+  
+
+
   // - Render
   return (
     <Box sx={{ mt: 2 }}>
@@ -56,6 +60,7 @@ export default function ImageUploadZone() {
         Choisir des images
         <input hidden type="file" accept="image/*" multiple onChange={handleChange} />
       </Button>
+      
     </Box>
   );
 }
