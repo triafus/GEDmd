@@ -30,9 +30,20 @@ const imagesSlice = createSlice({
     ) => {
       imagesAdapter.updateOne(state, action.payload);
     },
+    //dnd kit
+    reorderImages: (state, action: PayloadAction<string[]>) => {
+      const ids = action.payload;
+      ids.forEach((id, index) => {
+        const image = state.entities[id];
+        if (image) {
+          image.order = index;
+        }
+      });
+    },
   },
 });
 
-export const { addImage, addImages, removeImage, updateImage } = imagesSlice.actions;
+
+export const { addImage, addImages, removeImage, updateImage, reorderImages, } = imagesSlice.actions;
 
 export default imagesSlice.reducer;

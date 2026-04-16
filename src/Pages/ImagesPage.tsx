@@ -5,7 +5,7 @@ import ImageList from "../components/images/ImageList";
 
 export default function ImagesPage() {
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: 3, overflowY: "auto" }}>
       <Typography variant="h4">Biliotheque d'images</Typography>
       <Typography>Page de gestion des images</Typography>
       <ImageUploadZone />
