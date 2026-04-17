@@ -11,3 +11,10 @@ export interface File {
   content: string;
   updatedAt: number;
 }
+
+export interface Block {
+  id: string;
+  name: string;
+  content: string;
+}
+

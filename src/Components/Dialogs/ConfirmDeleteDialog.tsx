@@ -14,12 +14,9 @@ interface ConfirmDeleteDialogProps {
   itemName: string;
 }
 
-export const ConfirmDeleteDialog = ({
-  open,
-  onClose,
-  onConfirm,
-  itemName,
-}: ConfirmDeleteDialogProps) => {
+export const ConfirmDeleteDialog = (props: ConfirmDeleteDialogProps) => {
+  const { open, onClose, onConfirm, itemName } = props;
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Confirmer la suppression</DialogTitle>

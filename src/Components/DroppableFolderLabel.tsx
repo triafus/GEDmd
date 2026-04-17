@@ -9,12 +9,9 @@ interface DroppableFolderLabelProps {
   onDelete: () => void;
 }
 
-export const DroppableFolderLabel = ({
-  id,
-  name,
-  onRename,
-  onDelete,
-}: DroppableFolderLabelProps) => {
+export const DroppableFolderLabel = (props: DroppableFolderLabelProps) => {
+  const { id, name, onRename, onDelete } = props;
+
   const { isOver, setNodeRef } = useDroppable({
     id,
     data: { type: "folder" },

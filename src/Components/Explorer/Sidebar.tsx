@@ -22,8 +22,8 @@ import { CreateItemDialog } from "../Dialogs/CreateItemDialog";
 import { useNavigate } from "react-router";
 
 const Sidebar = () => {
-  const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
-  const [isFileDialogOpen, setIsFileDialogOpen] = useState(false);
+  const [isFolderDialogOpen, setIsFolderDialogOpen] = useState<boolean>(false);
+  const [isFileDialogOpen, setIsFileDialogOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
