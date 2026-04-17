@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import type { ChangeEvent } from "react";
-import { addImage } from "../../store/images/imagesSlice";
+import { addImage, addImages } from "../../store/images/imagesSlice";
 import type { RootState } from "../../store/store";
 
 export default function ImageUploadZone() {
@@ -11,44 +11,67 @@ export default function ImageUploadZone() {
 
 
   // - Functions
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    Array.from(files).forEach((file) => {
+      //.img.mdlc
+      if (file.name.endsWith(".img.mdlc")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const text = reader.result as string;
+            const image = JSON.parse(text);
+            dispatch(addImage(image));
+          } catch (err) {
+            console.error("Erreur import image", err);
+          }
+        };
+        reader.readAsText(file);
+      }
+      // imgs.dmlc
+      else if (file.name.endsWith(".imgs.mdlc")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const text = reader.result as string;
+            const images = JSON.parse(text);
+            const newImages = images.map((image: any, index: number) => ({
+              ...image,
+              id: crypto.randomUUID(),
+              updatedAt: Date.now(),
+              order: Date.now() + index,
+            }));
+            dispatch(addImages(newImages));
+          } catch (err) {
+            console.error("Erreur import images", err);
+          }
+        };
+        reader.readAsText(file);
+      }
 
-    if (!files) {
-      return;
-    }
-
-    const currentCount = images.ids.length;
-
-    Array.from(files).forEach((file, index) => {
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (!reader.result) {
-          return;
-        }
-
-        dispatch(
-          addImage({
+      // normal image
+      else if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result as string;
+          const newImage = {
             id: crypto.randomUUID(),
             name: file.name,
             mimeType: file.type,
-            base64: reader.result as string,
+            base64,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            order: currentCount + index,
-          })
-        );
-      };
+            order: Date.now(),
+          };
+          dispatch(addImage(newImage));
+        };
 
-      // - base64
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      }
     });
-
-    event.target.value = "";
   };
 
-  
 
 
   // - Render
@@ -58,9 +81,9 @@ export default function ImageUploadZone() {
 
       <Button variant="contained" component="label">
         Choisir des images
-        <input hidden type="file" accept="image/*" multiple onChange={handleChange} />
+        <input hidden type="file" accept="image/*,.img.mdlc,.imgs.mdlc" multiple onChange={handleChange} />
       </Button>
-      
+
     </Box>
   );
 }

@@ -21,7 +21,8 @@ export default function ImagesPage() {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "images.imgs.mdlc";
+    // -${Date.now()} éviter les doublons de noms
+    link.download = `images-${Date.now()}.imgs.mdlc`;
 
     document.body.appendChild(link);
     link.click();
@@ -40,7 +41,6 @@ export default function ImagesPage() {
         <Button
           sx={{ mt: 2 }}
           variant="outlined"
-
           onClick={handleExportAllImages}
         >
           Exporter toutes les images
