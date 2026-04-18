@@ -11,6 +11,7 @@ import { ConfirmDeleteDialog } from "../Dialogs/ConfirmDeleteDialog";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { DraggableFileLabel } from "../DraggableFileLabel";
 import { DroppableFolderLabel } from "../DroppableFolderLabel";
+import { exportFileAsMarkdown } from "../../utils/fileTransfer";
 
 const ExplorerTree = () => {
   const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
@@ -24,6 +25,9 @@ const ExplorerTree = () => {
   const { folders, files, selectedFileId, handleFileClick } = useExplorer();
   const dispatch = useDispatch();
 
+  const handleDownload = (name: string, content: string) => {
+    exportFileAsMarkdown(name, content);
+  };
 
   const handleCloseDialogs = () => {
     setRenameDialogOpen(false);
@@ -116,6 +120,7 @@ const ExplorerTree = () => {
                         name={file.name}
                         onRename={() => openRename(file.id, file.name, "file")}
                         onDelete={() => openDelete(file.id, file.name, "file")}
+                        onDownload={() => handleDownload(file.name, file.content)}
                       />
                     }
                     onClick={() => handleFileClick(file.id)}
@@ -138,6 +143,7 @@ const ExplorerTree = () => {
                     name={file.name}
                     onRename={() => openRename(file.id, file.name, "file")}
                     onDelete={() => openDelete(file.id, file.name, "file")}
+                    onDownload={() => handleDownload(file.name, file.content)}
                   />
                 }
                 onClick={() => handleFileClick(file.id)}
