@@ -9,8 +9,10 @@ interface ActionMenuProps {
   onDelete: () => void;
 }
 
-export const ActionMenu = ({ onRename, onDelete }: ActionMenuProps) => {
+export const ActionMenu = (props: ActionMenuProps) => {
+  const { onRename, onDelete } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
 
   const handleOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

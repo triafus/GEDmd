@@ -9,12 +9,9 @@ interface DraggableFileLabelProps {
   onDelete: () => void;
 }
 
-export const DraggableFileLabel = ({
-  id,
-  name,
-  onRename,
-  onDelete,
-}: DraggableFileLabelProps) => {
+export const DraggableFileLabel = (props: DraggableFileLabelProps) => {
+  const { id, name, onRename, onDelete } = props;
+
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
     data: { type: "file" },

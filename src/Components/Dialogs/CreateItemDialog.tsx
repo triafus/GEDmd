@@ -17,15 +17,17 @@ interface CreateItemDialogProps {
   initialValue?: string;
 }
 
-export const CreateItemDialog = ({
-  open,
-  onClose,
-  onSubmit,
-  title,
-  label,
-  initialValue = "",
-}: CreateItemDialogProps) => {
-  const [name, setName] = useState(initialValue);
+export const CreateItemDialog = (props: CreateItemDialogProps) => {
+  const {
+    open,
+    onClose,
+    onSubmit,
+    title,
+    label,
+    initialValue = "",
+  } = props;
+  const [name, setName] = useState<string>(initialValue);
+
 
   useEffect(() => {
     if (open) {

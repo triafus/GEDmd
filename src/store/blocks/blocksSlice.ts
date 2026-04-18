@@ -1,13 +1,7 @@
 import { createSlice, createEntityAdapter, type PayloadAction } from "@reduxjs/toolkit";
+import type { Block } from "../../types/Explorer";
 
-export interface CustomBlock {
-  id: string;
-  name: string;
-  content: string;
-  shortcut?: string;
-}
-
-const blocksAdapter = createEntityAdapter<CustomBlock>();
+const blocksAdapter = createEntityAdapter<Block>();
 
 const initialState = blocksAdapter.getInitialState();
 
@@ -15,10 +9,17 @@ export const blocksSlice = createSlice({
   name: "blocks",
   initialState,
   reducers: {
-    addBlock: blocksAdapter.addOne,
-    removeBlock: blocksAdapter.removeOne,
-    updateBlock: (state, action: PayloadAction<{ id: string; changes: Partial<CustomBlock> }>) => {
-      blocksAdapter.updateOne(state, action.payload);
+    addBlock: (state, action: PayloadAction<Block>) => {
+      blocksAdapter.addOne(state, action.payload);
+    },
+    removeBlock: (state, action: PayloadAction<string>) => {
+      blocksAdapter.removeOne(state, action.payload);
+    },
+    updateBlock: (state, action: PayloadAction<{ id: string; name: string; content: string }>) => {
+      blocksAdapter.updateOne(state, {
+        id: action.payload.id,
+        changes: { name: action.payload.name, content: action.payload.content },
+      });
     },
   },
 });

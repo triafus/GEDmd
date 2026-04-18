@@ -13,8 +13,8 @@ import { DraggableFileLabel } from "../DraggableFileLabel";
 import { DroppableFolderLabel } from "../DroppableFolderLabel";
 
 const ExplorerTree = () => {
-  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [renameDialogOpen, setRenameDialogOpen] = useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [targetItem, setTargetItem] = useState<{
     id: string;
     name: string;
@@ -23,6 +23,7 @@ const ExplorerTree = () => {
 
   const { folders, files, selectedFileId, handleFileClick } = useExplorer();
   const dispatch = useDispatch();
+
 
   const handleCloseDialogs = () => {
     setRenameDialogOpen(false);
