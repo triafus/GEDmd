@@ -37,7 +37,7 @@ export const MarkdownPreview = (props: MarkdownPreviewProps) => {
           "& code": {
             bgcolor: "transparent",
             p: 0,
-          }
+          },
         },
       }}
     >

@@ -13,17 +13,20 @@ import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import HomeIcon from "@mui/icons-material/Home";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ExplorerTree from "./ExplorerTree";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { addFolder } from "../../store/folders/foldersSlice";
 import { addFile } from "../../store/files/filesSlice";
 import { CreateItemDialog } from "../Dialogs/CreateItemDialog";
 import { useNavigate } from "react-router";
+import { importMarkdownFile } from "../../utils/fileTransfer";
 
 const Sidebar = () => {
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState<boolean>(false);
   const [isFileDialogOpen, setIsFileDialogOpen] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -50,6 +53,30 @@ const Sidebar = () => {
     );
   };
 
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const content = await importMarkdownFile(file);
+        const name = file.name.replace(/\.md$/, "");
+        dispatch(
+          addFile({
+            id: crypto.randomUUID(),
+            name,
+            parentId: null,
+            content,
+            updatedAt: Date.now(),
+          })
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -73,7 +100,21 @@ const Sidebar = () => {
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           GED Explorateur
         </Typography>
-        <Box>
+        <Box sx={{ display: "flex", gap: 0.5 }}>
+          <input
+            type="file"
+            accept=".md"
+            hidden
+            ref={fileInputRef}
+            onChange={handleImportFile}
+          />
+          <IconButton
+            size="small"
+            onClick={() => fileInputRef.current?.click()}
+            title="Importer un fichier MD"
+          >
+            <FileUploadIcon fontSize="small" />
+          </IconButton>
           <IconButton
             size="small"
             onClick={() => setIsFileDialogOpen(true)}

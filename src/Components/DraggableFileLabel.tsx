@@ -7,10 +7,11 @@ interface DraggableFileLabelProps {
   name: string;
   onRename: () => void;
   onDelete: () => void;
+  onDownload: () => void;
 }
 
 export const DraggableFileLabel = (props: DraggableFileLabelProps) => {
-  const { id, name, onRename, onDelete } = props;
+  const { id, name, onRename, onDelete, onDownload } = props;
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id,
@@ -53,7 +54,7 @@ export const DraggableFileLabel = (props: DraggableFileLabelProps) => {
       >
         <Typography noWrap>{name}</Typography>
       </Box>
-      <ActionMenu onRename={onRename} onDelete={onDelete} />
+      <ActionMenu onRename={onRename} onDelete={onDelete} onDownload={onDownload} />
     </Box>
 
   );
