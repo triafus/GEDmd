@@ -1,4 +1,4 @@
-import { Box, Typography, Grid, Button, Menu, MenuItem } from "@mui/material";
+import { Box, Typography, Grid, Button, Menu, MenuItem, Dialog, DialogTitle, DialogContent, List, ListItemButton, ListItemText } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { useParams } from "react-router";
@@ -9,7 +9,7 @@ import { updateFileContent } from "../store/files/filesSlice";
 import { addImage } from "../store/images/imagesSlice";
 import { MarkdownEditor } from "../Components/Editor/MarkdownEditor";
 import { MarkdownPreview } from "../Components/Editor/MarkdownPreview";
-import DownloadIcon from "@mui/icons-material/Download";
+// import DownloadIcon from "@mui/icons-material/Download";
 
 const EditorPage = () => {
   const { fileId } = useParams<{ fileId: string }>();
@@ -20,6 +20,15 @@ const EditorPage = () => {
   );
   const [cursorStart, setCursorStart] = useState(0);
   const [cursorEnd, setCursorEnd] = useState(0);
+  //menu insert img from bibliotheque
+  const [imageMenuAnchor, setImageMenuAnchor] = useState<null | HTMLElement>(null);
+  const [imageLibraryOpen, setImageLibraryOpen] = useState(false);
+  const images = useSelector((state: RootState) =>
+    Object.values(state.images.entities)
+      .filter((image) => image !== undefined)
+      .sort((a, b) => a.order - b.order)
+  );
+
   const file = useSelector((state: RootState) =>
     fileId ? state.files.entities[fileId] : undefined
   );
@@ -53,6 +62,39 @@ const EditorPage = () => {
     }
   };
 
+  //insert img 
+  const handleOpenImageMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setImageMenuAnchor(event.currentTarget);
+  };
+  const handleCloseImageMenu = () => {
+    setImageMenuAnchor(null);
+  };
+  const insertMarkdownAtCursor = (markdown: string) => {
+    if (!fileId || !file) return;
+    const before = file.content.slice(0, cursorStart);
+    const after = file.content.slice(cursorEnd);
+    const newContent = before + markdown + after;
+    dispatch(
+      updateFileContent({
+        id: fileId,
+        content: newContent,
+      })
+    );
+  };
+  const handleInsertImageFromLibrary = (image: any) => {
+    const markdown = `![${image.name}](${image.base64})`;
+    insertMarkdownAtCursor(markdown);
+    setImageLibraryOpen(false);
+  };
+  const handleOpenComputerImport = () => {
+    handleCloseImageMenu();
+    handleInsertImage(); // hàm bạn đã có sẵn
+  };
+  const handleOpenLibrary = () => {
+    handleCloseImageMenu();
+    setImageLibraryOpen(true);
+  };
+  // img from device
   const handleInsertImage = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -60,7 +102,6 @@ const EditorPage = () => {
     input.onchange = (e: Event) => {
       const target = e.target as HTMLInputElement;
       const selectedFile = target.files?.[0];
-
       if (!selectedFile || !fileId || !file) {
         return;
       }
@@ -129,20 +170,20 @@ const EditorPage = () => {
     input.click();
   };
 
-  const handleExportMarkdown = () => {
-    if (!file) return;
-    const blob = new Blob([file.content], {
-      type: "text/markdown;charset=utf-8",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${file.name}-${Date.now()}.md`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
+  // const handleExportMarkdown = () => {
+  //   if (!file) return;
+  //   const blob = new Blob([file.content], {
+  //     type: "text/markdown;charset=utf-8",
+  //   });
+  //   const url = URL.createObjectURL(blob);
+  //   const link = document.createElement("a");
+  //   link.href = url;
+  //   link.download = `${file.name}-${Date.now()}.md`;
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  //   URL.revokeObjectURL(url);
+  // };
 
   if (!file) {
     return (
@@ -188,7 +229,7 @@ const EditorPage = () => {
         <Button
           variant="outlined"
           startIcon={<ImageIcon />}
-          onClick={handleInsertImage}
+          onClick={handleOpenImageMenu}
         >
           Insérer une image
         </Button>
@@ -200,13 +241,13 @@ const EditorPage = () => {
         >
           Insérer un bloc
         </Button>
-        <Button
+        {/* <Button
           variant="outlined"
           startIcon={<DownloadIcon />}
           onClick={handleExportMarkdown}
         >
           Exporter
-        </Button>
+        </Button> */}
 
         <Menu
           anchorEl={anchorEl}
@@ -230,6 +271,18 @@ const EditorPage = () => {
             })
           )}
         </Menu>
+        <Menu
+          anchorEl={imageMenuAnchor}
+          open={Boolean(imageMenuAnchor)}
+          onClose={handleCloseImageMenu}
+        >
+          <MenuItem onClick={handleOpenComputerImport}>
+            Depuis mon appareil
+          </MenuItem>
+          <MenuItem onClick={handleOpenLibrary}>
+            Depuis la bibliothèque
+          </MenuItem>
+        </Menu>
       </Box>
 
       <Grid container spacing={2} sx={{ height: "100%", minHeight: 0 }}>
@@ -248,6 +301,49 @@ const EditorPage = () => {
           <MarkdownPreview content={file.content} />
         </Grid>
       </Grid>
+      //dialog image from bibliotheque
+      <Dialog
+        open={imageLibraryOpen}
+        onClose={() => setImageLibraryOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Choisir une image de la bibliothèque</DialogTitle>
+        <DialogContent>
+          {images.length === 0 ? (
+            <Typography color="text.secondary">
+              Aucune image disponible.
+            </Typography>
+          ) : (
+            <List>
+              {images.map((image) => {
+                if (!image) return null;
+
+                return (
+                  <ListItemButton
+                    key={image.id}
+                    onClick={() => handleInsertImageFromLibrary(image)}
+                  >
+                    <Box
+                      component="img"
+                      src={image.base64}
+                      alt={image.name}
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        objectFit: "cover",
+                        borderRadius: 1,
+                        mr: 2,
+                      }}
+                    />
+                    <ListItemText primary={image.name} />
+                  </ListItemButton>
+                );
+              })}
+            </List>
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

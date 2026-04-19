@@ -21,9 +21,19 @@ export const foldersSlice = createSlice({
         changes: { name: action.payload.name },
       });
     },
+    moveFolder: (
+      state,
+      action: PayloadAction<{ id: string; newParentId: string | null }>
+    ) => {
+      foldersAdapter.updateOne(state, {
+        id: action.payload.id,
+        changes: { parentId: action.payload.newParentId },
+      });
+    },
   },
 });
 
-export const { addFolder, removeFolder, renameFolder } = foldersSlice.actions;
+export const { addFolder, removeFolder, renameFolder, moveFolder } = foldersSlice.actions;
+
 
 export default foldersSlice.reducer;
